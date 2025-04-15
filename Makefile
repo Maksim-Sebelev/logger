@@ -22,13 +22,12 @@ EXECUTABLE ?= log
 
 LOG_DIR := Log
 
--include local.mk
-
 override CFLAGS += $(COMMONINC)
 
-CSRC =  main.cpp 			\
-		src/lib/lib.cpp  	 \
-		src/log/log.cpp		  \
+
+CSRC = main.cpp			\
+	   src/lib/lib.cpp   \
+	   src/lib/log.cpp    \
 
 
 COBJ := $(addprefix $(OUT_O_DIR)/,$(CSRC:.cpp=.o))
