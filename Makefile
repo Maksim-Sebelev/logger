@@ -66,6 +66,7 @@ cleanDirs:
 
 cleanLog:
 	rm -rf $(LOG_DIR)
+	
 #======================================================
 
 NODEPS = clean

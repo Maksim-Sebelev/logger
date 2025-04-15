@@ -25,12 +25,14 @@ const char* red_text_html_name    = "red_text";
 const char* green_text_html_name  = "green_text";
 const char* pink_text_html_name   = "pink_text";
 const char* yellow_text_html_name = "yellow_text";
+const char* blue_text_html_name   = "blue_text";
 const char* black_text_html_name  = "black_text";
 
 const char* red_text_rgb    = " { color: #ff4444; } \n";
 const char* green_text_rgb  = " { color: #0bf80b; } \n";
 const char* pink_text_rgb   = " { color: #f605c7; } \n";
-const char* yellow_text_rgb = " { color: #ecc40b; } \n"; 
+const char* yellow_text_rgb = " { color: #ecc40b; } \n";
+const char* blue_text_rgb   = " { color: #0c89e8; } \n"; 
 const char* black_text_rgb  = " { color: #000000; } \n";
 
 //=== ===//
@@ -49,13 +51,14 @@ void OpenLog()
     fprintf(LogFile, "<html>                      \n"
         "\t<head>                                 \n"
         "\t<style>                                \n"
-        "\t\t%s" // background
-        "\tpre { color: #ffffff; } \n"
-        ".%s%s\n" // red
-        ".%s%s\n" // green
-        ".%s%s\n" // pink
-        ".%s%s\n" // yellow
-        ".%s%s\n" // black
+        "\t\t%s                                   \n" // background
+        "\tpre { color: #ffffff; }              \n"
+        ".%s%s                                    \n" // red
+        ".%s%s                                    \n" // green
+        ".%s%s                                    \n" // pink
+        ".%s%s                                    \n" // yellow
+        ".%s%s                                    \n" // black
+        ".%s%s                                    \n" // blue
         "\t</style>                               \n"
         "\t</head>                                \n"
         "\t<body>                                 \n"
@@ -67,7 +70,8 @@ void OpenLog()
     green_text_html_name, green_text_rgb,
     pink_text_html_name, pink_text_rgb,
     yellow_text_html_name, yellow_text_rgb,
-    black_text_html_name, black_text_rgb
+    black_text_html_name, black_text_rgb,
+    blue_text_html_name, blue_text_rgb
 );
 
     return;
@@ -115,6 +119,9 @@ static const char* GetHtmlColor(LogColor color)
         case LogColor::Pink:   return pink_text_html_name;
         case LogColor::Yellow: return yellow_text_html_name;
         case LogColor::Black:  return black_text_html_name;
+        case LogColor::Blue:   return blue_text_html_name;
+        case LogColor::White:  return "";
+        default:               assert(0 && "undef color in log");
     }
 
     return "";

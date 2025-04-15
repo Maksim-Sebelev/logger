@@ -16,6 +16,7 @@ enum LogColor : char
     Pink,
     Yellow,
     Black,
+    Blue,
 };
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -35,9 +36,9 @@ void LogPrint(LogColor color, const char* format, ...);
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-#define LOG_PLACE(color)                         LogPrint(color, "File [%s]\nLine [%d]\nFunc [%s]\n", __FILE__,         __LINE__,     __func__)
-#define LOG_PRINT_PLACE(Color, file, line, func) LogPrint(Color, "File [%s]\nLine [%d]\nFunc [%s]\n",         file,         line,         func)
-#define LOG_PRINT_PLACE_STRUCT(Color, place)     LogPrint(Color, "File [%s]\nLine [%d]\nFunc [%s]\n", (place).file, (place).line, (place).func)
+#define LOG_PLACE(color)                         LogPrint(color, "File [%s]\nLine [%d]\nFunc [%s]\n",       __FILE__,       __LINE__,       __func__)
+#define LOG_PRINT_PLACE(Color, file, line, func) LogPrint(Color, "File [%s]\nLine [%d]\nFunc [%s]\n",         file  ,         line  ,         func  )
+#define LOG_PRINT_PLACE_STRUCT(Color, place)     LogPrint(Color, "File [%s]\nLine [%d]\nFunc [%s]\n", (place).file  , (place).line  , (place).func  )
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -53,6 +54,7 @@ void LogPrint(LogColor color, const char* format, ...);
 
 
 #define LOG_NS() LogPrint(LogColor::White, "\n")
+#define LOG_TB() LogPrint(LogColor::White, "\t")
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
