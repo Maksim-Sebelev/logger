@@ -6,64 +6,104 @@
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-FILE* LogFile = nullptr;
+// #define _IMG_BACKGROUND  // if you want to see your image on background
+
+#ifdef _IMG_BACKGROUND
+    #define ON_IMG(...) __VA_ARGS__
+    #define OFF_IMG(...)
+
+    #define ON_GRADIENT(...) 
+    #define OFF_GRADIENT(...)
+
+#else
+    #define ON_IMG(...)
+    #define OFF_IMG(...) __VA_ARGS__
+
+    // #define _GRADIENT  // if you want to see color gradient on background
+ 
+    #ifdef _GRADIENT
+        #define ON_GRADIENT(...) __VA_ARGS__
+        #define OFF_GRADIENT(...)
+        
+    #else
+        #define ON_GRADIENT(...)
+        #define OFF_GRADIENT(...) __VA_ARGS__
+
+    #endif
+    
+#endif
+
+
+ON_IMG(
+const char* background_image = "../include/lib/backgrounds/anime_tyan.jpg";
+)
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+FILE*       LogFile = nullptr;
 const char* LogName = "Log/log.html";
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-static void makeStyle      (const char* wayToImage, size_t nTabBefore);
-static void makeTextSection (size_t nTabBefore);
+static void makeStyle     (ON_IMG(const char* wayToImage,) size_t nTabBefore);
+static void makeTextClass (size_t nTabBefore);
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static const char* GetHtmlColor(LogColor color);
 
-static void fprintfInHtml         (const char* format, ...);
-static void fprintfHtml           ();
-static void fprintfBody           ();
-static void fprintfBodyWithBracket();
-static void fprintfBodyWithBracketEnd();
-static void fprintfHtmlEnd        ();
-static void fprintfHead           ();
-static void fprintfHeadEnd        ();
-static void fprintfStyle          ();
-static void fprintfStyleEnd       ();
-static void fprintfPre            ();
-static void fprintfPreEnd         ();
-static void fprintfNTab           (size_t nTab);
-static void fprintfNSpace         (size_t nSpace);
-static void fprintfNS             ();
-static void fprintfNNS            (size_t nNS);
-static void fprintfOpenBracket    ();
-static void fprintfCloseBracket   ();
-static void fprintfSemicolonPoint ();
-static void fprintfColor          ();
-static void fprintfTextSection    ();
-static void fprintfTextSectionEnd ();
-static void fprintfH1             ();
-static void fprintfH1End          ();
-static void fprintfP              ();
-static void fprintfPEnd           ();
-static void fprintfPEnd           ();
-static void fprintfTitle          ();
-static void fprintfTitleEnd       ();
-static void fprintfPtext          ();
-static void fprintfPtextEnd       ();
-
-static void fprintfMetaWithArgs   (const char* format, ...);
-static void fprintfMeta           ();
-
-static void fprintfDivWithArgs    (const char* format, ...);
-static void fprintfDiv            ();
-static void fprintfDivEnd         ();
+static void fprintfInHtml                   (const char* format, ...);
+static void fprintfHtml                     ();
+static void fprintfBody                     ();
+static void fprintfBodyWithBracket          ();
+static void fprintfBodyWithBracketEnd       ();
+static void fprintfHead                     ();
+static void fprintfHeadEnd                  ();
+static void fprintfStyle                    ();
+static void fprintfStyleEnd                 ();
+static void fprintfNTab                     (size_t nTab);
+static void fprintfNS                       ();
+static void fprintfNNS                      (size_t nNS);
+ON_GRADIENT(
+static void fprintfCloseBracket             ();
+)
+static void fprintfTextSection              ();
+static void fprintfTextSectionEnd           ();
+static void fprintfH1                       ();
+static void fprintfH1End                    ();
+// static void fprintfH2                       ();
+// static void fprintfH2End                    ();
+static void fprintfP                        ();
+static void fprintfPEnd                     ();
+static void fprintfPtext                    ();
+static void fprintfPtextEnd                 ();
+static void fprintfMetaWithArgs             (const char* format, ...);
+static void fprintfDivWithArgs              (const char* format, ...);
+static void fprintfSpanWithArgs             (const char* format, ...);
+static void fprintfSpanEnd                  ();
+ON_GRADIENT(
+static void fprintfKeyFramesGradient        ();
+static void fprintfKeyFramesGradientEnd     ();
+)
 
 
-static void fprintfSpanWithArgs   (const char* format, ...);
-static void fprintfSpan           ();
-static void fprintfSpanEnd        ();
+ON_IMG(
+static void makeBackGroundImage      (const char* wayToImage, size_t nTabBefore);
+)
+OFF_IMG(
+static void makeBackGround           (                        size_t nTabBefore);
+)
+ON_GRADIENT(
+static void makeBackGroundGradient   (                        size_t nTabBefore);
+)
+static void makeTextSection          (                        size_t nTabBefore);
+static void makeTextColor            (                        size_t nTabBefore);
+static void makeP                    (                        size_t nTabBefore);
+static void makeColor                (                        size_t nTabBefore);
+static void makeColorP               (                        size_t nTabBefore);
+static void makeH1                   (                        size_t nTabBefore);
+// static void makeH2                   (                        size_t nTabBefore);
 
-static void makeBackGroundImage(const char* wayToImage, size_t nTabBefore);
-static void makeTextColor(size_t nTabBefore);
 
 //=== background color ===//
 const char* black_background     = "body { background-color: #121212; }                                                                          \n";
@@ -100,10 +140,9 @@ void OpenLog()
 
     fprintfHtml(); fprintfNS();
 
-    makeStyle("../include/lib/backgrounds/anime_tyan.webp", 1);
-    // makeStyle("../include/lib/backgrounds/senya.jpg", 1);
+    makeStyle(ON_IMG(background_image,) 1);
 
-    makeTextSection(0);
+    makeTextClass(0);
 
     return;
 }
@@ -125,7 +164,6 @@ void LogTextColor(LogColor color)
     static bool WasUsed = false;
     if (WasUsed)
     {
-        fprintf(stderr, "wtf\n");
         LogTextColorEnd();
         WasUsed = false;
     }
@@ -190,26 +228,39 @@ void LogPrint(LogColor color, const char* format, ...)
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-static void makeStyle(const char* wayToImage, size_t nTabBefore)
+static void makeStyle(ON_IMG(const char* wayToImage,) size_t nTabBefore)
 {
     fprintfNTab(nTabBefore);
     fprintfHead(); fprintfNS();
     
     fprintfNTab(nTabBefore + 1);
-    fprintfMetaWithArgs("name=\"viewport\" content=\"width=device-width, initial-scale=1.0\""); fprintfNS();
+        fprintfMetaWithArgs("name=\"viewport\" content=\"width=device-width, initial-scale=1.0\""); fprintfNS();
     
     fprintfNTab(nTabBefore + 1);
-    fprintfTitle(); fprintfInHtml("background image"); fprintfTitleEnd(); fprintfNS();
+        fprintfStyle(); fprintfNS();
     
+    ON_IMG
+    (
+            makeBackGroundImage(wayToImage, nTabBefore + 2);        
+    ) 
+    OFF_IMG
+    (
+            makeBackGround          (nTabBefore + 2);
+        ON_GRADIENT
+        (
+            makeBackGroundGradient  (nTabBefore + 2);
+        )
+    )
+            makeTextSection         (nTabBefore + 2);
+            makeH1                  (nTabBefore + 2);
+            makeP                   (nTabBefore + 2);
+            makeColor               (nTabBefore + 2);
+            makeColorP              (nTabBefore + 2);
+            makeTextColor           (nTabBefore + 2);
+
+
     fprintfNTab(nTabBefore + 1);
-    fprintfStyle(); fprintfNS();
-    
-    makeBackGroundImage(wayToImage, nTabBefore + 2);        
-    makeTextColor(nTabBefore + 2);
-    
-    fprintfNTab(nTabBefore + 2);
-    fprintfStyleEnd(); fprintfNS();
+        fprintfStyleEnd(); fprintfNS();
     
     fprintfNTab(nTabBefore);
     fprintfHeadEnd(); fprintfNS();
@@ -217,7 +268,7 @@ static void makeStyle(const char* wayToImage, size_t nTabBefore)
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-static void makeTextSection(size_t nTabBefore)
+static void makeTextClass(size_t nTabBefore)
 {
 
     fprintfNTab(nTabBefore);
@@ -229,50 +280,154 @@ static void makeTextSection(size_t nTabBefore)
     
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+OFF_IMG(
+static void makeBackGround(size_t nTabBefore)
+{
+    fprintfNTab(nTabBefore);
+    fprintfBodyWithBracket(); fprintfNS();
+    
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("margin: 0;\n");
+
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("padding: 0;\n");
+
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("height: 100vh;\n");
+
+        fprintfNTab(nTabBefore + 1);
+        
+        ON_GRADIENT
+        (
+            fprintfInHtml("background: linear-gradient(135deg, #000000, #000000, #6600ff, #0de612, #0de612);\n");
+            // fprintfInHtml("background: linear-gradient(135deg, #ffffff, #ffffff, #ffffff, #0644f6, #0644f6, #0644f6, #ea2b0b, #ea2b0b, #ea2b0b);\n");
+        )
+        OFF_GRADIENT
+        (
+            fprintfInHtml("background-color: #000000;\n");
+        )
+
+        ON_GRADIENT(
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("animation: gradient 15s ease infinite;\n");
+        )
+    
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("background-attachment: fixed;\n");
+
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("background-size: 300%% 200%%;\n");
+
+
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("font-family: Arial, sans-serif;\n");
+
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("color: white;\n");
+
+
+
+    fprintfNTab(nTabBefore);
+    fprintfBodyWithBracketEnd(); fprintfNNS(2);
+}
+)
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+ON_GRADIENT(
+static void makeBackGroundGradient(size_t nTabBefore)
+{
+    fprintfNTab(nTabBefore);
+    fprintfKeyFramesGradient(); fprintfNS();
+
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("0%% {\n");
+            
+            fprintfNTab(nTabBefore + 2);
+                fprintfInHtml("background-position: 0%% 50%%;\n");
+
+        fprintfNTab(nTabBefore + 1);
+            fprintfCloseBracket(); fprintfNS();
+
+
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("50%% {\n");
+
+            fprintfNTab(nTabBefore + 2);
+                fprintfInHtml("background-position: 100%% 50%%;\n");
+
+        fprintfNTab(nTabBefore + 1);
+                fprintfCloseBracket(); fprintfNS();
+
+
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("100%% {\n");
+        
+            fprintfNTab(nTabBefore + 2);
+                fprintfInHtml("background-position: 0%% 50%%;\n");
+
+        fprintfNTab(nTabBefore + 1);
+                fprintfCloseBracket(); fprintfNS();
+
+    fprintfNTab(nTabBefore);
+    fprintfKeyFramesGradientEnd(); fprintfNNS(2);
+}
+)
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+ON_IMG(
 static void makeBackGroundImage(const char* wayToImage, size_t nTabBefore)
 {
     fprintfNTab(nTabBefore);
     fprintfBodyWithBracket(); fprintfNS();
     
-            fprintfNTab(nTabBefore + 1);
-                fprintfInHtml("margin: 0;\n");
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("margin: 0;\n");
 
-            fprintfNTab(nTabBefore + 1);
-                fprintfInHtml("padding: 0;\n");
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("padding: 0;\n");
 
-            fprintfNTab(nTabBefore + 1);
-                fprintfInHtml("height: 100vh;\n");
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("height: 100vh;\n");
 
-            fprintfNTab(nTabBefore + 1);
-                fprintfInHtml("background-image: url('%s');\n", wayToImage);
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("background-image: url('%s');\n", wayToImage);
 
-            fprintfNTab(nTabBefore + 1);
-                fprintfInHtml("background-size: cover;\n");
+        fprintfNTab(nTabBefore + 1);
+            OFF_IMG(
+            fprintfInHtml("background-size: 400%% 400%%;\n");
+            )
+            ON_IMG(
+            fprintfInHtml("background-size: cover;\n");
+            )
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("background-position: center;\n");
 
-            fprintfNTab(nTabBefore + 1);
-                fprintfInHtml("background-position: center;\n");
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("background-repeat: no-repeat;\n");
 
-            fprintfNTab(nTabBefore + 1);
-                fprintfInHtml("background-repeat: no-repeat;\n");
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("background-attachment: fixed;\n");
 
-            fprintfNTab(nTabBefore + 1);
-                fprintfInHtml("background-attachment: fixed;\n");
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("font-family: Arial, sans-serif;\n");
 
-            fprintfNTab(nTabBefore + 1);
-                fprintfInHtml("font-family: Arial, sans-serif;\n");
-
-            fprintfNTab(nTabBefore + 1);
-                fprintfInHtml("color: white;\n");
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("color: white;\n");
 
     fprintfNTab(nTabBefore);
     fprintfBodyWithBracketEnd(); fprintfNNS(2);
+}
+)
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-    
+static void makeTextSection(size_t nTabBefore)
+{
     fprintfNTab(nTabBefore);
     fprintfTextSection(); fprintfNS();
 
         fprintfNTab(nTabBefore + 1);
-            fprintfInHtml("background-color: rgba(0, 0, 0, 0.5);\n");
+            fprintfInHtml("background-color: rgba(0, 0, 0, 0.4);\n");
 
         fprintfNTab(nTabBefore + 1);
             fprintfInHtml("padding: 30px;\n");
@@ -284,26 +439,51 @@ static void makeBackGroundImage(const char* wayToImage, size_t nTabBefore)
             fprintfInHtml("max-width: 800px;\n");
 
         fprintfNTab(nTabBefore + 1);
-            fprintfInHtml("margin: -10px auto;\n");
+            fprintfInHtml("margin: 20px auto;\n");
 
-        fprintfNTab(nTabBefore + 1);
+        // fprintfNTab(nTabBefore + 1);
             // fprintfInHtml("backdrop-filter: blur(5px);\n");
 
     fprintfNTab(nTabBefore);
             fprintfTextSectionEnd();  fprintfNNS(2);
+}
 
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+static void makeH1(size_t nTabBefore)
+{
+    fprintfNTab(nTabBefore);
+    fprintfH1(); fprintfNS();
+    
+    fprintfNTab(nTabBefore + 1); 
+        fprintfInHtml("text-align: center;\n");
+    fprintfNTab(nTabBefore + 1); 
+        fprintfInHtml("margin-bottom: 5px;\n");
 
     fprintfNTab(nTabBefore);
-        fprintfH1(); fprintfNS();
-    
-        fprintfNTab(nTabBefore + 1); 
-            fprintfInHtml("text-align: center;\n");
-        fprintfNTab(nTabBefore + 1); 
-            fprintfInHtml("margin-bottom:105px;\n");
+    fprintfH1End(); fprintfNNS(2);
+}
 
-    fprintfNTab(nTabBefore);
-            fprintfH1End(); fprintfNNS(2);
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// static void makeH2(size_t nTabBefore)
+// {
+//     fprintfNTab(nTabBefore);
+//     fprintfH2(); fprintfNS();
     
+//     fprintfNTab(nTabBefore + 1); 
+//         fprintfInHtml("text-align: center;\n");
+//     fprintfNTab(nTabBefore + 1); 
+//         fprintfInHtml("margin-bottom: 5px;\n");
+
+//     fprintfNTab(nTabBefore);
+//     fprintfH2End(); fprintfNNS(2);
+// }
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+static void makeP(size_t nTabBefore)
+{
     fprintfNTab(nTabBefore);
     fprintfP(); fprintfNS();
 
@@ -317,23 +497,7 @@ static void makeBackGroundImage(const char* wayToImage, size_t nTabBefore)
         fprintfInHtml("margin: 10px 0;\n");
 
     fprintfNTab(nTabBefore);
-            fprintfPEnd(); fprintfNNS(2);
-}
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-static void makeH1(size_t nTabBefore)
-{
-    fprintfNTab(nTabBefore);
-    fprintfH1(); fprintfNS();
-    
-        fprintfNTab(nTabBefore + 1); 
-            fprintfInHtml("text-align: center;\n");
-        fprintfNTab(nTabBefore + 1); 
-            fprintfInHtml("margin-bottom: 5px;\n");
-
-    fprintfNTab(nTabBefore);
-            fprintfH1End(); fprintfNNS(2);
+    fprintfPEnd(); fprintfNNS(2);
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -362,7 +526,12 @@ static void makeTextColor(size_t nTabBefore)
     fprintfInHtml(".%s %s", red_text_html_name    , red_text_rgb    );
 
     fprintfNS();
+}
 
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+static void makeColor(size_t nTabBefore)
+{
     fprintfNTab(nTabBefore);
     fprintfInHtml(".color {\n");
 
@@ -381,15 +550,18 @@ static void makeTextColor(size_t nTabBefore)
     // fprintfNTab(nTabBefore + 1);
     // fprintfInHtml("border-left: 3px solid currentColor;\n");
 
-
-
     fprintfNTab(nTabBefore);
     fprintfInHtml("}"); fprintfNNS(2);
+}
 
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+static void makeColorP(size_t nTabBefore)
+{
     fprintfNTab(nTabBefore);
     fprintfInHtml(".color p {\n");
 
-    fprintfNTab(nTabBefore);
+    fprintfNTab(nTabBefore  + 1);
     fprintfInHtml("white-space: pre;\n");
 
     fprintfNTab(nTabBefore + 1);
@@ -425,15 +597,7 @@ static void fprintfInHtml(const char* format, ...)
 
 static void fprintfHtml()
 {
-    fprintf(LogFile, "<html>");
-    return;
-}
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-static void fprintfHtmlEnd()
-{
-    fprintf(LogFile, "</html>");
+    fprintfInHtml("<html>");
     return;
 }
 
@@ -441,35 +605,28 @@ static void fprintfHtmlEnd()
 
 static void fprintfBody()
 {
-    fprintf(LogFile, "<body>");
-}
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-static void fprintfBodyEnd()
-{
-    fprintf(LogFile, "</body>");
+    fprintfInHtml("<body>");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static void fprintfBodyWithBracket()
 {
-    fprintf(LogFile, "body {");
+    fprintfInHtml("body {");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static void fprintfBodyWithBracketEnd()
 {
-    fprintf(LogFile, "}");
+    fprintfInHtml("}");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static void fprintfHead()
 {
-    fprintf(LogFile, "<head>");
+    fprintfInHtml("<head>");
     return;
 }
 
@@ -477,7 +634,7 @@ static void fprintfHead()
 
 static void fprintfHeadEnd()
 {
-    fprintf(LogFile, "</head>");
+    fprintfInHtml("</head>");
     return;
 }
 
@@ -485,49 +642,14 @@ static void fprintfHeadEnd()
 
 static void fprintfStyle()
 {
-    fprintf(LogFile, "<style>");
+    fprintfInHtml("<style>");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static void fprintfStyleEnd()
 {
-    fprintf(LogFile, "</style>");
-}
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-static void fprintfPre()
-{
-    fprintf(LogFile, "<pre>");
-}
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-static void fprintfPreEnd()
-{
-    fprintf(LogFile, "</pre>");
-}
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-static void fprintfTitle()
-{
-    fprintf(LogFile, "<title>");
-}
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-static void fprintfTitleEnd()
-{
-    fprintf(LogFile, "</title>");
-}
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-static void fprintfMeta()
-{
-    fprintf(LogFile, "<meta>");
+    fprintfInHtml("</style>");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -566,20 +688,6 @@ static void fprintfDivWithArgs(const char* format, ...)
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-static void fprintfDiv()
-{
-    fprintf(LogFile, "<div>");
-}
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-static void fprintfDivEnd()
-{
-    fprintf(LogFile, "</div>");
-}
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 static void fprintfSpanWithArgs(const char* format, ...)
 {
     va_list args;
@@ -597,32 +705,32 @@ static void fprintfSpanWithArgs(const char* format, ...)
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-static void fprintfSpan()
+static void fprintfSpanEnd()
 {
-    fprintf(LogFile, "<span>");
+    fprintfInHtml("</span>");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-static void fprintfSpanEnd()
+ON_GRADIENT(
+static void fprintfKeyFramesGradient()
 {
-    fprintf(LogFile, "</span>");
+    fprintfInHtml("@keyframes gradient {");
 }
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+static void fprintfKeyFramesGradientEnd()
+{
+    fprintfInHtml("}");
+}
+)
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static void fprintfNTab(size_t nTab)
 {
-    for (size_t i = 0; i < nTab; i++) fprintf(LogFile, "\t");
-    return;
-}
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-
-static void fprintfNSpace(size_t nSpace)
-{
-    for (size_t i = 0; i < nSpace; i++) fprintf(LogFile, " ");
+    for (size_t i = 0; i < nTab; i++) fprintfInHtml("\t");
     return;
 }
 
@@ -630,7 +738,7 @@ static void fprintfNSpace(size_t nSpace)
 
 static void fprintfNS()
 {
-    fprintf(LogFile, "\n");
+    fprintfInHtml("\n");
     return;
 }
 
@@ -638,95 +746,88 @@ static void fprintfNS()
 
 static void fprintfNNS(size_t nNS)
 {
-    for (size_t i = 0; i < nNS; i++) fprintf(LogFile, "\n");
+    for (size_t i = 0; i < nNS; i++) fprintfInHtml("\n");
     return;
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-static void fprintfOpenBracket()
-{
-    fprintf(LogFile, "{ ");
-    return;
-}
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+ON_GRADIENT(
 static void fprintfCloseBracket()
 {
-    fprintf(LogFile, " }");
+    fprintfInHtml(" }");
     return;
 }
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-static void fprintfSemicolonPoint()
-{
-    fprintf(LogFile, ";");
-    return;
-}
-
-//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-static void fprintfColor()
-{
-    fprintf(LogFile, "color: ");
-}
+)
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static void fprintfTextSection()
 {
-    fprintf(LogFile, ".text-section {");
+    fprintfInHtml(".text-section {");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static void fprintfTextSectionEnd()
 {
-    fprintf(LogFile, "}");
+    fprintfInHtml("}");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static void fprintfH1()
 {
-    fprintf(LogFile, "h1 {");
+    fprintfInHtml("h1 {");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static void fprintfH1End()
 {
-    fprintf(LogFile, "}");
+    fprintfInHtml("}");
 }
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// static void fprintfH2()
+// {
+//     fprintfInHtml("h2 {");
+// }
+
+// //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+// static void fprintfH2End()
+// {
+//     fprintfInHtml("}");
+// }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static void fprintfP()
 {
-    fprintf(LogFile, "p {");
+    fprintfInHtml("p {");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static void fprintfPEnd()
 {
-    fprintf(LogFile, "}");
+    fprintfInHtml("}");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static void fprintfPtext()
 {
-    fprintf(LogFile, "<p>");
+    fprintfInHtml("<p>");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static void fprintfPtextEnd()
 {
-    fprintf(LogFile, "</p>");
+    fprintfInHtml("</p>");
 }
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
