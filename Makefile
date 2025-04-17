@@ -26,8 +26,7 @@ override CFLAGS += $(COMMONINC)
 
 
 CSRC = main.cpp			\
-	   src/lib/lib.cpp   \
-	   src/lib/log.cpp    \
+	   src/log/log.cpp   \
 
 
 COBJ := $(addprefix $(OUT_O_DIR)/,$(CSRC:.cpp=.o))
@@ -66,6 +65,13 @@ cleanDirs:
 cleanLog:
 	rm -rf $(LOG_DIR)
 	
+#======================================================
+
+iwyuf ?= main.cpp
+
+iwyu:
+	iwyu $(COMMONINC) $(iwyuf)
+
 #======================================================
 
 NODEPS = clean

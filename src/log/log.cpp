@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <stdarg.h>
 #include <assert.h>
-#include "lib/log.hpp"
+#include "log/log.hpp"
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -35,7 +35,7 @@
 
 
 ON_IMG(
-const char* background_image = "../include/lib/backgrounds/anime_tyan.jpg";
+const char* background_image = "../include/log/backgrounds/anime_tyan.webp";
 )
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -81,11 +81,14 @@ static void fprintfMetaWithArgs             (const char* format, ...);
 static void fprintfDivWithArgs              (const char* format, ...);
 static void fprintfSpanWithArgs             (const char* format, ...);
 static void fprintfSpanEnd                  ();
+static void fprintfBodyBefore               ();
+static void fprintfBodyBeforeEnd            ();
 ON_GRADIENT(
 static void fprintfKeyFramesGradient        ();
 static void fprintfKeyFramesGradientEnd     ();
 )
 
+static void makeBodyBefore    (                         size_t nTabBefore);
 
 ON_IMG(
 static void makeBackGroundImage      (const char* wayToImage, size_t nTabBefore);
@@ -258,6 +261,7 @@ static void makeStyle(ON_IMG(const char* wayToImage,) size_t nTabBefore)
             makeColorP              (nTabBefore + 2);
             makeTextColor           (nTabBefore + 2);
 
+            makeBodyBefore(nTabBefore + 2);
 
     fprintfNTab(nTabBefore + 1);
         fprintfStyleEnd(); fprintfNS();
@@ -280,6 +284,45 @@ static void makeTextClass(size_t nTabBefore)
     
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+static void makeBodyBefore(size_t nTabBefore)
+{
+    fprintfNTab(nTabBefore);
+    fprintfBodyBefore(); fprintfNS();
+
+    fprintfNTab(nTabBefore + 1);
+        fprintfInHtml("content: \"\";\n");
+
+    fprintfNTab(nTabBefore + 1);
+        fprintfInHtml("position: fixed;\n");
+
+    fprintfNTab(nTabBefore + 1);
+        fprintfInHtml("top: 0;\n");
+
+    fprintfNTab(nTabBefore + 1);
+        fprintfInHtml("left: 0;\n");
+
+    fprintfNTab(nTabBefore + 1);
+        fprintfInHtml("right: 0;\n");
+
+    fprintfNTab(nTabBefore + 1);
+        fprintfInHtml("bottom: 0;\n");
+
+    fprintfNTab(nTabBefore + 1);
+        fprintfInHtml("background: rgba(0, 0, 0, 0.5);\n");
+
+    fprintfNTab(nTabBefore + 1);
+        fprintfInHtml("z-index: -1;");
+
+    fprintfNTab(nTabBefore + 1);
+        fprintfInHtml("pointer-events: none;\n");
+
+
+    fprintfNTab(nTabBefore);
+    fprintfBodyBeforeEnd();
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 OFF_IMG(
 static void makeBackGround(size_t nTabBefore)
 {
@@ -294,6 +337,9 @@ static void makeBackGround(size_t nTabBefore)
 
         fprintfNTab(nTabBefore + 1);
             fprintfInHtml("height: 100vh;\n");
+
+        fprintfNTab(nTabBefore + 1);
+            fprintfInHtml("position: relative;\n");
 
         fprintfNTab(nTabBefore + 1);
         
@@ -316,7 +362,7 @@ static void makeBackGround(size_t nTabBefore)
             fprintfInHtml("background-attachment: fixed;\n");
 
         fprintfNTab(nTabBefore + 1);
-            fprintfInHtml("background-size: 300%% 200%%;\n");
+            fprintfInHtml("background-size: 400%% 400%%;\n");
 
 
         fprintfNTab(nTabBefore + 1);
@@ -426,8 +472,8 @@ static void makeTextSection(size_t nTabBefore)
     fprintfNTab(nTabBefore);
     fprintfTextSection(); fprintfNS();
 
-        fprintfNTab(nTabBefore + 1);
-            fprintfInHtml("background-color: rgba(0, 0, 0, 0.4);\n");
+        // fprintfNTab(nTabBefore + 1);
+            // fprintfInHtml("background-color: rgba(0, 0, 0, 0.4);\n"); // затемнение секции текста
 
         fprintfNTab(nTabBefore + 1);
             fprintfInHtml("padding: 30px;\n");
@@ -618,6 +664,20 @@ static void fprintfBodyWithBracket()
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 static void fprintfBodyWithBracketEnd()
+{
+    fprintfInHtml("}");
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+static void fprintfBodyBefore()
+{
+    fprintfInHtml("body::before {");
+}
+
+//---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+static void fprintfBodyBeforeEnd()
 {
     fprintfInHtml("}");
 }
