@@ -6,40 +6,12 @@
 
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-// #define _IMG_BACKGROUND  // if you want to see your image on background
-
-#ifdef _IMG_BACKGROUND
-    #define ON_IMG(...) __VA_ARGS__
-    #define OFF_IMG(...)
-
-    #define ON_GRADIENT(...) 
-    #define OFF_GRADIENT(...)
-
-#else
-    #define ON_IMG(...)
-    #define OFF_IMG(...) __VA_ARGS__
-
-    // #define _GRADIENT  // if you want to see color gradient on background
- 
-    #ifdef _GRADIENT
-        #define ON_GRADIENT(...) __VA_ARGS__
-        #define OFF_GRADIENT(...)
-        
-    #else
-        #define ON_GRADIENT(...)
-        #define OFF_GRADIENT(...) __VA_ARGS__
-
-    #endif
-    
-#endif
-
-
 ON_IMG(
 const char* background_image = "../include/log/backgrounds/anime_tyan.webp";
 )
-
+    
 //---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-
+    
 FILE*       LogFile = nullptr;
 const char* LogName = "Log/log.html";
 
