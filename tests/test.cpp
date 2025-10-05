@@ -1,8 +1,10 @@
-#include "log++.hpp"
+#include <iostream>
+
+import logger;
 
 int main()
 {
-    Logger log("some_log_file", LogCallPlace::Yes);
+    Logger log(LoggerBackground::gradient, LogCallPlace::Yes);
 
     log.logc(LogColor::Blue, "something blue");
     log.code_place();
