@@ -9,6 +9,7 @@ module;
 #include <cstdarg>
 #include <cstdlib>
 #include <source_location>
+#include <filesystem>
 
 #include "log_background_settings.hpp"
 #include "console_custom_output.hpp"
@@ -28,10 +29,14 @@ export module logger;
 
 //----------------------------------------------------------------------------------------------
 
-const std::string default_log_file_name    = "log.html"                              ;
-const std::string path_to_log_file         = "../log/"                               ; // from 'build' directory
-const std::string full_path_to_default_log = path_to_log_file + default_log_file_name; // from 'build' directory
-const std::string html_extension           = ".html"                                 ;
+#ifdef LOG_DIR
+const std::string path_to_log_file         = LOG_DIR                                                  ;
+#else // LOG_DIR
+const std::string path_to_log_file         = "../log/"                                                ; // from 'build' directory
+#endif // LOG_DIR
+const std::string default_log_file_name    = "log"                                                    ;
+const std::string html_extension           = ".html"                                                  ;
+const std::string full_path_to_default_log = path_to_log_file + default_log_file_name + html_extension; // from 'build' directory
 
 //----------------------------------------------------------------------------------------------
 
@@ -118,14 +123,16 @@ export class Logger
         template <typename... Args>
         void write_in_html(const Args&... args);
 
-        void all_ctors_actions(const LogCallPlace& need_to_log_call_place, const std::source_location& location);
+        void all_ctors_actions(const LogCallPlace& need_to_log_call_place, const std::source_location& location);   
 
+        bool try_to_create_log_dir_and_open_it_one_more_time(const std::string& log_file_name);
+    
         std::string get_color_in_str_for_html(const LogColor& color);
 
         void date(const LogColor& color = LogColor::White);
 
         void log_call_place_if_need(const LogCallPlace& need_to_log_call_place, const std::source_location location, std::string_view message = "");
-        void check_that_open_success(const std::string& log_file_name);
+        void check_that_open_success(const std::string& log_file_name, bool already_with_path = false);
 
         [[noreturn]]
         void failed_open_log_file(const std::string& file);
@@ -140,7 +147,7 @@ Logger::Logger(const std::string& log_file_name, const LogCallPlace& need_to_log
 log_file_(path_to_log_file + log_file_name + html_extension),
 current_color_(LogColor::White)
 {
-    check_that_open_success(log_file_name);
+    check_that_open_success(path_to_log_file + log_file_name + html_extension);
 
     write_in_html(PLAIN_BACKGROUND_HTML_SETTINGS);
 
@@ -153,7 +160,7 @@ Logger::Logger(const LogCallPlace& need_to_log_call_place, const std::source_loc
 log_file_(full_path_to_default_log),
 current_color_(LogColor::White)
 {
-    check_that_open_success(default_log_file_name);
+    check_that_open_success(full_path_to_default_log, true);
     
     write_in_html(PLAIN_BACKGROUND_HTML_SETTINGS);
 
@@ -167,6 +174,8 @@ log_file_(path_to_log_file + log_file_name + html_extension),
 current_color_(LogColor::White)
 {
     check_that_open_success(log_file_name);
+
+    std::cout << GREEN "full path to log file = `" VIOLET BOLD << path_to_log_file + log_file_name + html_extension << GREEN "'" << std::endl;
 
     switch (background)
     {
@@ -196,7 +205,7 @@ Logger::Logger(const LoggerBackground& background, const LogCallPlace& need_to_l
 log_file_(full_path_to_default_log),
 current_color_(LogColor::White)
 {
-    check_that_open_success(default_log_file_name);
+    check_that_open_success(full_path_to_default_log, true);
 
     switch (background)
     {
@@ -239,7 +248,7 @@ Logger::Logger(const LoggerBackground& background, std::string_view path_to_imag
 log_file_(full_path_to_default_log),
 current_color_(LogColor::White)
 {
-    check_that_open_success(default_log_file_name);
+    check_that_open_success(full_path_to_default_log, true);
 
     switch (background)
     {
@@ -391,7 +400,8 @@ void Logger::code_place(const std::source_location& code_place)
 template <typename... Args>
 void Logger::write_in_html(const Args&... args)
 {
-     (log_file_ << ... << args);
+    ((log_file_ << args), ... );
+    log_file_ << std::flush;
 }
 
 //----------------------------------------------------------------------------------------------
@@ -422,10 +432,40 @@ void Logger::date(const LogColor& color)
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::check_that_open_success(const std::string& log_file_name)
+void Logger::check_that_open_success(const std::string& log_file_name, bool already_with_path)
 {
-    if (log_file_.fail())
-        failed_open_log_file(log_file_name); // exit 1
+    if (!log_file_.fail())
+        return;
+
+    const std::string full_path_to_log_file = (already_with_path) ? (log_file_name) :
+                                              (path_to_log_file + log_file_name + html_extension);
+
+    if (try_to_create_log_dir_and_open_it_one_more_time(full_path_to_log_file))
+        return;
+
+    failed_open_log_file(full_path_to_log_file); // exit 1
+}
+
+//----------------------------------------------------------------------------------------------
+
+bool Logger::try_to_create_log_dir_and_open_it_one_more_time(const std::string& log_file_name)
+{
+    std::filesystem::path path(log_file_name);
+    std::string           dir_path = path.parent_path().string();
+
+    #if defined(_WIN32) || defined(_WIN64)
+        std::string command = "mkdir \"" + dir_path + "\" 2>nul";
+    #else
+        std::string command = "mkdir -p \"" + dir_path + "\" 2>/dev/null";
+    #endif
+
+    int result = system(command.c_str());
+
+    if (result == EXIT_FAILURE)
+        return false;
+
+    log_file_.open(log_file_name);
+    return !(log_file_.fail());
 }
 
 //----------------------------------------------------------------------------------------------

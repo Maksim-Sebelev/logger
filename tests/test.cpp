@@ -38,6 +38,8 @@ int MAIN()
 
 int main()
 {
+    std::cout << RED BOLD;
     MAIN();
+    std::cout << RESET_CONSOLE_OUT;
     return 0;
 }

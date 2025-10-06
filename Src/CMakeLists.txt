@@ -7,42 +7,57 @@ project(logger
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_library(logger_module)
+# ======================================================================
 
-target_sources(logger_module
+set(LOG_OUT_DIR ${CMAKE_BINARY_DIR}/../log)
+
+set(LOGGER_LIB logger)
+
+add_library(${LOGGER_LIB})
+
+target_sources(${LOGGER_LIB}
     PUBLIC
     FILE_SET CXX_MODULES
     TYPE CXX_MODULES
     BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
-    FILES ${CMAKE_SOURCE_DIR}/modules/log.cppm
+    FILES ${PROJECT_SOURCE_DIR}/modules/log.cppm
 )
 
-target_include_directories(logger_module
+target_include_directories(${LOGGER_LIB}
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/include/logger/
-        ${CMAKE_SOURCE_DIR}/include/global/
+        ${PROJECT_SOURCE_DIR}/include/logger/
+        ${PROJECT_SOURCE_DIR}/include/global/
 )
 
-add_executable(log++_test
+target_compile_options(${LOGGER_LIB} PRIVATE
+    $<$<CONFIG:Debug>:-DSAVE_HTML_STYLE>
+    -DLOG_DIR="${LOG_OUT_DIR}/"
+)
+
+# ======================================================================
+# creating test for logger
+set(TEST_TARGET log_test)
+add_executable(${TEST_TARGET}
+    EXCLUDE_FROM_ALL
     ${PROJECT_SOURCE_DIR}/../tests/test.cpp
 )
 
-target_link_libraries(log++_test logger_module)
+target_link_libraries(${TEST_TARGET} ${LOGGER_LIB})
 
-target_include_directories(log++_test 
+target_include_directories(${TEST_TARGET} 
     PRIVATE
-        ${CMAKE_SOURCE_DIR}/include/logger/
+        ${PROJECT_SOURCE_DIR}/include/logger/
         ${PROJECT_SOURCE_DIR}/include/global/
 )
 
 add_custom_target(run
-    DEPENDS log++_test
-    COMMAND ${CMAKE_BINARY_DIR}/log++_test
+    DEPENDS ${TEST_TARGET}
+    COMMAND ${PROJECT_BINARY_DIR}/${TEST_TARGET}
 )
 
 add_custom_target(rebuild
-    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR} --target clean
-    COMMAND ${CMAKE_COMMAND} --build ${CMAKE_BINARY_DIR}
+    COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --target clean
+    COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}
 
 )
 
@@ -98,8 +113,4 @@ function(add_release_and_debug_options_to_executable executable)
 
 endfunction(add_release_and_debug_options_to_executable)
 
-add_release_and_debug_options_to_executable(log++_test)
-
-target_compile_options(logger_module PRIVATE
-    $<$<CONFIG:Debug>:-DSAVE_HTML_STYLE>
-)
+add_release_and_debug_options_to_executable(${TEST_TARGET})

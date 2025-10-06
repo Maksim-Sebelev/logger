@@ -1,0 +1,127 @@
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+			body {
+				margin: 0;
+				padding: 0;
+				height: 100vh;
+				position: relative;
+				background: linear-gradient(135deg, #000000, #000000, #6600ff, #6600ff);
+				animation: gradient 15s ease infinite;
+				background-attachment: fixed;
+				background-size: 400% 400%;
+				font-family: Arial, sans-serif;
+				color: White;
+			}
+
+			@keyframes gradient {
+				0% {
+					background-position: 0% 50%;
+				}
+				50% {
+				background-position: 100% 50%;
+				}
+				100% {
+					background-position: 0% 50%;
+				}
+			}
+
+			.text-section {
+				padding: 30px;
+				border-radius: 10px;
+				max-width: 800px;
+				margin: 20px auto;
+			}
+
+			h1 {
+				text-align: center;
+				margin-bottom: 5px;
+			}
+
+			h2 {
+				margin-bottom: 5px;
+			}
+
+			p {
+				line-height: 0.5;
+				text-align: justify;
+				margin: 10px 0;
+			}
+
+			.color {
+				padding: 0px 10px;
+				margin: 1px 0;
+				line-height: 0.5;
+			}
+
+			.color p {
+				White-space: pre;
+				padding: 0;
+				margin: 0;
+				line-height: 1.1;
+			}
+
+			.red_text { color: #ff4444; }
+			.green_text { color: #0bf80b; }
+			.pink_text { color: #f605c7; }
+			.yellow_text { color: #ecc40b; }
+			.blue_text { color: #0c89e8; }
+			.black_text { color: #000000; }
+			.white_text { color: #ffffff; }
+
+			body::before {
+				content: "";
+				position: fixed;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background: rgba(0, 0, 0, 0.5);
+				z-index: -1;
+				pointer-events: none;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div class="text-section">
+			<span class="color white text">
+				<h2>========== 23:10:06 2025-10-06 ==========</h2>
+			</span>
+			<span class="color pink_text">
+				<p>/home/ananasik/projects/C++/logger/2_version/tests/test.cpp:8:61</p>
+			</span>
+			<span class="color green_text">
+				<p>int MAIN()</p>
+				<p>
+</p>
+0x625ba87457800x625ba87454a0130x625ba8745740				<p>
+</p>
+			</span>
+			<span class="color blue_text">
+0x625ba87457800x625ba87455000x625ba8745740			</span>
+			<span class="color pink_text">
+				<p>/home/ananasik/projects/C++/logger/2_version/tests/test.cpp:14:19</p>
+			</span>
+			<span class="color green_text">
+				<p>int MAIN()</p>
+			</span>
+			<span class="color pink_text">
+				<h2>=============== SOME TITLE ===============</h2>
+			</span>
+			<span class="color green_text">
+				<p>0x625ba87456000x625ba87455c00x625ba87455800x625ba8745640</p>
+			</span>
+			<span class="color yellow_text">
+0x625ba87457800x625ba87456000x625ba87457400x625ba87457800x625ba87456800x625ba8745740			</span>
+			<span class="color green_text">
+			</span>
+			<span class="color blue_text">
+0x625ba87457800x625ba87456000x625ba87457400x625ba87457800x625ba87456800x625ba8745740			</span>
+			<span class="color white_text">
+				<h2>========== 23:10:06 2025-10-06 ==========</h2>
+			</span>
+		</div>
+	</body>
+</html>
