@@ -46,13 +46,14 @@ export enum class LoggerBackground
 
 export enum class LogColor : char
 {
-    White ,
-    Red   ,
-    Green ,
-    Pink  ,
-    Yellow,
-    Black ,
-    Blue  ,
+    White   ,
+    Red     ,
+    Green   ,
+    Pink    ,
+    Yellow  ,
+    Black   ,
+    Blue    ,
+    NO_COLOR,
 };
 
 //----------------------------------------------------------------------------------------------
@@ -117,9 +118,11 @@ export class Logger
         template <typename... Args>
         void write_in_html(const Args&... args);
 
+        void all_ctors_actions(const LogCallPlace& need_to_log_call_place, const std::source_location& location);
+
         std::string get_color_in_str_for_html(const LogColor& color);
 
-        void date();
+        void date(const LogColor& color = LogColor::White);
 
         void log_call_place_if_need(const LogCallPlace& need_to_log_call_place, const std::source_location location, std::string_view message = "");
         void check_that_open_success(const std::string& log_file_name);
@@ -141,9 +144,7 @@ current_color_(LogColor::White)
 
     write_in_html(PLAIN_BACKGROUND_HTML_SETTINGS);
 
-    date();
-    log_call_place_if_need(need_to_log_call_place, location, "");
-    log_endl();
+    all_ctors_actions(need_to_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -156,9 +157,7 @@ current_color_(LogColor::White)
     
     write_in_html(PLAIN_BACKGROUND_HTML_SETTINGS);
 
-    date();
-    log_call_place_if_need(need_to_log_call_place, location, "");
-    log_endl();
+    all_ctors_actions(need_to_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -188,9 +187,7 @@ current_color_(LogColor::White)
             break;
     }
 
-    date();
-    log_call_place_if_need(need_to_log_call_place, location, "");
-    log_endl();
+    all_ctors_actions(need_to_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -220,9 +217,7 @@ current_color_(LogColor::White)
             break;
     }
 
-    date();
-    log_call_place_if_need(need_to_log_call_place, location, "");
-    log_endl();
+    all_ctors_actions(need_to_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -235,9 +230,7 @@ current_color_(LogColor::White)
     
     write_in_html(IMAGE_BACKGROUND_HTML_SETTINGS(path_to_image));
 
-    date();
-    log_call_place_if_need(need_to_log_call_place, location, "");
-    log_endl();
+    all_ctors_actions(need_to_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -259,9 +252,7 @@ current_color_(LogColor::White)
 
     write_in_html(IMAGE_BACKGROUND_HTML_SETTINGS(path_to_image));
 
-    date();
-    log_call_place_if_need(need_to_log_call_place, location, "");
-    log_endl();
+    all_ctors_actions(need_to_log_call_place, location);
 }
 
 // dtor
@@ -308,7 +299,7 @@ void Logger::log_in_line(const Args&... args)
 
 void Logger::log_endl()
 {
-    write_in_html(ON_TAB("\t\t\t\t") "<p>\n</p>");
+    write_in_html(ON_TAB("\t\t\t\t") "<p>\n</p>" ON_TAB("\n"));
 }
 
 //----------------------------------------------------------------------------------------------
@@ -319,7 +310,7 @@ void Logger::logc_in_line_begin(const LogColor& color)
     write_in_html(ON_TAB("\t\t\t\t") "<p>");
 }
 
-//------------------c----------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
 
 void Logger::log_in_line_begin()
 {
@@ -365,7 +356,7 @@ void Logger::set_color(const LogColor& color)
 {
     if (color == current_color_) // жертуем одним сравнением, чтобы не делать дорогой write_in_html
         return;
-    
+
     current_color_ = color;
 
     std::string color_html = get_color_in_str_for_html(color);
@@ -400,12 +391,22 @@ void Logger::code_place(const std::source_location& code_place)
 template <typename... Args>
 void Logger::write_in_html(const Args&... args)
 {
-    (log_file_ << ... << args);
+     (log_file_ << ... << args);
 }
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::date()
+void Logger::all_ctors_actions(const LogCallPlace& need_to_log_call_place, const std::source_location& location)
+{
+    write_in_html(ON_TAB("\t\t\t") "<span class=\"color white text\">" ON_TAB("\n"));
+    date();
+    log_call_place_if_need(need_to_log_call_place, location);
+    log_endl();
+}
+
+//----------------------------------------------------------------------------------------------
+
+void Logger::date(const LogColor& color)
 {
     time_t raw_time;
     struct tm *time_info;
@@ -416,7 +417,7 @@ void Logger::date()
     time_info = localtime(&raw_time);
     strftime(date, date_len, "%H:%M:%S %Y-%m-%d", time_info);
 
-    title(date);
+    title(date, color);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -446,14 +447,14 @@ std::string Logger::get_color_in_str_for_html(const LogColor& color)
 {
     switch (color)
     {
-        case LogColor::Red:    return "red_text";
-        case LogColor::Green:  return "green_text";
-        case LogColor::Pink:   return "pink_text";
-        case LogColor::Yellow: return "yellow_text";
-        case LogColor::Black:  return "black_text";
-        case LogColor::Blue:   return "blue_text";
-        case LogColor::White:  return "";
-        default:               builtin_unreachable_wrapper("undef color type. maybe you forgot to add something color");
+        case LogColor::Red:      return "red_text"   ;
+        case LogColor::Green:    return "green_text" ;
+        case LogColor::Pink:     return "pink_text"  ;
+        case LogColor::Yellow:   return "yellow_text";
+        case LogColor::Black:    return "black_text" ;
+        case LogColor::Blue:     return "blue_text"  ;
+        case LogColor::White:    return "white_text" ;
+        default:                 builtin_unreachable_wrapper("undef color type. maybe you forgot to add something color");
     }
 
     builtin_unreachable_wrapper("we must return in switch");

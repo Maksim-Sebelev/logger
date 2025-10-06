@@ -1,10 +1,14 @@
 #include <iostream>
+#include "console_custom_output.hpp"
 
 import logger;
 
-int main()
+int MAIN()
 {
     Logger log(LoggerBackground::gradient, LogCallPlace::Yes);
+
+    log.log("мое любимое число = ", 13);
+    log.log_endl();;
 
     log.logc(LogColor::Blue, "something blue");
     log.code_place();
@@ -15,8 +19,8 @@ int main()
 
     log.log_in_line_begin();
 
-    log.log_in_line("something", "mi", "");
-    log.log_in_line("pt");
+    log.log_in_line("something", "MI", " fuck this place ");
+    log.log_in_line("PT");
 
     log.log_in_line_end();
 
@@ -28,5 +32,12 @@ int main()
     log.logc(LogColor::Blue, "something");
     log.logc(LogColor::Blue, "mipt");
 
+    
+    return 0;
+}
+
+int main()
+{
+    MAIN();
     return 0;
 }

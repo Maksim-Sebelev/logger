@@ -111,16 +111,16 @@ GLOBAL_HTML_SETTINGS_1                                                          
 "font-family: Arial, sans-serif;"                                                  endl1_str tab4_str \
 "color: White;"                                                                    endl1_str tab3_str \
 "}"                                                                                endl2_str tab3_str \
-"@keyframes gradient {"                                                            endl2_str tab4_str \
-"0% {"                                                                             endl2_str tab5_str \
-"background-position: 0% 50%;"                                                     endl2_str tab4_str \
-"}"                                                                                endl2_str tab5_str \
-"50% {"                                                                            endl2_str tab4_str \
-"background-position: 100% 50%;"                                                   endl2_str tab5_str \
-"}"                                                                                endl2_str tab4_str \
-"100% {"                                                                           endl2_str tab5_str \
-"background-position: 0% 50%;"                                                     endl2_str tab4_str \
-"}"                                                                                endl2_str tab3_str \
+"@keyframes gradient {"                                                            endl1_str tab4_str \
+"0% {"                                                                             endl1_str tab5_str \
+"background-position: 0% 50%;"                                                     endl1_str tab4_str \
+"}"                                                                                endl1_str tab4_str \
+"50% {"                                                                            endl1_str tab4_str \
+"background-position: 100% 50%;"                                                   endl1_str tab4_str \
+"}"                                                                                endl1_str tab4_str \
+"100% {"                                                                           endl1_str tab5_str \
+"background-position: 0% 50%;"                                                     endl1_str tab4_str \
+"}"                                                                                endl1_str tab3_str \
 "}"                                                                                endl2_str tab3_str \
 GLOBAL_HTML_SETTINGS_2
 

@@ -99,3 +99,7 @@ function(add_release_and_debug_options_to_executable executable)
 endfunction(add_release_and_debug_options_to_executable)
 
 add_release_and_debug_options_to_executable(log++_test)
+
+target_compile_options(logger_module PRIVATE
+    $<$<CONFIG:Debug>:-DSAVE_HTML_STYLE>
+)
