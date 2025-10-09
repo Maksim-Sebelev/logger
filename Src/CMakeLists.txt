@@ -9,7 +9,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 # ======================================================================
 
-set(LOG_OUT_DIR ${CMAKE_BINARY_DIR}/../log)
+if (NOT DEFINED LOG_OUT_DIR)
+    set(LOG_OUT_DIR ${CMAKE_BINARY_DIR}/../log)
+endif()
 
 set(LOGGER_LIB logger)
 
@@ -29,12 +31,13 @@ target_include_directories(${LOGGER_LIB}
         ${PROJECT_SOURCE_DIR}/include/global/
 )
 
-target_compile_options(${LOGGER_LIB} PRIVATE
-    $<$<CONFIG:Debug>:-DSAVE_HTML_STYLE>
-    -DLOG_DIR="${LOG_OUT_DIR}/"
+target_compile_definitions(${LOGGER_LIB} PRIVATE
+    LOG_DIR="${LOG_OUT_DIR}/"
+    $<$<CONFIG:Debug>:SAVE_HTML_STYLE>
 )
 
 # ======================================================================
+
 # creating test for logger
 set(TEST_TARGET log_test)
 add_executable(${TEST_TARGET}
@@ -61,7 +64,7 @@ add_custom_target(rebuild
 
 )
 
-function(add_release_and_debug_options_to_executable executable)
+function(add_release_and_debug_options_to_target executable)
     # some saitizers for debug version
     set(DEBUG_SANITIZERS
         -fsanitize=address
@@ -111,6 +114,7 @@ function(add_release_and_debug_options_to_executable executable)
         >
     )
 
-endfunction(add_release_and_debug_options_to_executable)
+endfunction(add_release_and_debug_options_to_target)
 
-add_release_and_debug_options_to_executable(${TEST_TARGET})
+add_release_and_debug_options_to_target(${TEST_TARGET})
+add_release_and_debug_options_to_target(${LOGGER_LIB})

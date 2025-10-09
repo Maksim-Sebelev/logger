@@ -8,9 +8,8 @@ module;
 #include <cassert>
 #include <cstdarg>
 #include <cstdlib>
-#include <source_location>
 #include <filesystem>
-
+#include <source_location>
 #include "log_background_settings.hpp"
 #include "console_custom_output.hpp"
 #include "global.hpp"
@@ -90,9 +89,8 @@ export class Logger
        ~Logger();
 
         // not allowed to copy logger
-        Logger          (const Logger&) = delete;
-        Logger operator=(const Logger&) = delete;
-        Logger operator=(      Logger&) = delete;
+        Logger           (const Logger&) = delete;
+        Logger& operator=(const Logger&) = delete;
 
         // logger public methods    
         template <typename... Args>
@@ -147,7 +145,7 @@ Logger::Logger(const std::string& log_file_name, const LogCallPlace& need_to_log
 log_file_(path_to_log_file + log_file_name + html_extension),
 current_color_(LogColor::White)
 {
-    check_that_open_success(path_to_log_file + log_file_name + html_extension);
+    check_that_open_success(log_file_name);
 
     write_in_html(PLAIN_BACKGROUND_HTML_SETTINGS);
 
@@ -175,7 +173,6 @@ current_color_(LogColor::White)
 {
     check_that_open_success(log_file_name);
 
-    std::cout << GREEN "full path to log file = `" VIOLET BOLD << path_to_log_file + log_file_name + html_extension << GREEN "'" << std::endl;
 
     switch (background)
     {
@@ -391,6 +388,8 @@ void Logger::code_place(const std::source_location& code_place)
             code_place.function_name()
     );
 }
+
+//----------------------------------------------------------------------------------------------
 
 // private methods
 //----------------------------------------------------------------------------------------------
