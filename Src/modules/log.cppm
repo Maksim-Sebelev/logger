@@ -12,7 +12,7 @@ module;
 #include <source_location>
 
 #include "log_background_settings.hpp"
-#include "console_custom_output.hpp"
+#include "custom_console_output.hpp"
 #include "global.hpp"
 
 //----------------------------------------------------------------------------------------------
