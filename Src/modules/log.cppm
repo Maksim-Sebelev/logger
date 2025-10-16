@@ -10,6 +10,7 @@ module;
 #include <cstdlib>
 #include <filesystem>
 #include <source_location>
+
 #include "log_background_settings.hpp"
 #include "console_custom_output.hpp"
 #include "global.hpp"
@@ -121,7 +122,7 @@ export class Logger
         template <typename... Args>
         void write_in_html(const Args&... args);
 
-        void all_ctors_actions(const LogCallPlace& need_to_log_call_place, const std::source_location& location);   
+        void all_ctors_actions(std::string_view name, const LogCallPlace& need_to_log_call_place, const std::source_location& location);   
 
         bool try_to_create_log_dir_and_open_it_one_more_time(const std::string& log_file_name);
     
@@ -149,7 +150,7 @@ current_color_(LogColor::White)
 
     write_in_html(PLAIN_BACKGROUND_HTML_SETTINGS);
 
-    all_ctors_actions(need_to_log_call_place, location);
+    all_ctors_actions(path_to_log_file + log_file_name + html_extension, need_to_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -162,7 +163,7 @@ current_color_(LogColor::White)
     
     write_in_html(PLAIN_BACKGROUND_HTML_SETTINGS);
 
-    all_ctors_actions(need_to_log_call_place, location);
+    all_ctors_actions(full_path_to_default_log, need_to_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -193,7 +194,7 @@ current_color_(LogColor::White)
             break;
     }
 
-    all_ctors_actions(need_to_log_call_place, location);
+    all_ctors_actions(path_to_log_file + log_file_name + html_extension, need_to_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -223,7 +224,7 @@ current_color_(LogColor::White)
             break;
     }
 
-    all_ctors_actions(need_to_log_call_place, location);
+    all_ctors_actions(full_path_to_default_log, need_to_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -236,7 +237,7 @@ current_color_(LogColor::White)
     
     write_in_html(IMAGE_BACKGROUND_HTML_SETTINGS(path_to_image));
 
-    all_ctors_actions(need_to_log_call_place, location);
+    all_ctors_actions(path_to_log_file + log_file_name + html_extension, need_to_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
@@ -258,7 +259,7 @@ current_color_(LogColor::White)
 
     write_in_html(IMAGE_BACKGROUND_HTML_SETTINGS(path_to_image));
 
-    all_ctors_actions(need_to_log_call_place, location);
+    all_ctors_actions(full_path_to_default_log, need_to_log_call_place, location);
 }
 
 // dtor
@@ -405,8 +406,10 @@ void Logger::write_in_html(const Args&... args)
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::all_ctors_actions(const LogCallPlace& need_to_log_call_place, const std::source_location& location)
+void Logger::all_ctors_actions(std::string_view name, const LogCallPlace& need_to_log_call_place, const std::source_location& location)
 {
+    std::cerr << WHITE "full path log:" << std::endl << BOLD << name << RESET_CONSOLE_OUT << std::endl;
+
     write_in_html(ON_TAB("\t\t\t") "<span class=\"color white text\">" ON_TAB("\n"));
     date();
     log_call_place_if_need(need_to_log_call_place, location);

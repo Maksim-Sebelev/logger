@@ -58,7 +58,7 @@ add_custom_target(run
     COMMAND ${PROJECT_BINARY_DIR}/${TEST_TARGET}
 )
 
-add_custom_target(rebuild
+add_custom_target(rebuild_logger
     COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR} --target clean
     COMMAND ${CMAKE_COMMAND} --build ${PROJECT_BINARY_DIR}
 
@@ -82,11 +82,11 @@ function(add_release_and_debug_options_to_target executable)
         -fsanitize=leak
         -fsanitize=nonnull-attribute
         -fsanitize=null
-        -fsanitize=object-size
         -fsanitize=return
         -fsanitize=returns-nonnull-attribute
         -fsanitize=shift
         -fsanitize=signed-integer-overflow
+        # -fsanitize=object-size
     )
 
     set(DEBUG_FLAGS
