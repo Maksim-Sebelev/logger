@@ -5,10 +5,16 @@ import logger;
 
 int MAIN()
 {
+    glog.log("something");
+
+    // glog.log_image("/home/ananasik/Pictures/mmm/random/dystopianw-153.jpg", "good image");
+
+    glog.log_image("/home/ananasik/Pictures/Screenshots/no_ua.png", "good image");
+
     Logger log(LoggerBackground::gradient, LogCallPlace::Yes);
 
     log.log("мое любимое число = ", 13);
-    log.log_endl();;
+    log.log_endl();
 
     log.logc(LogColor::Blue, "something blue");
     log.code_place();
@@ -31,15 +37,14 @@ int MAIN()
 
     log.logc(LogColor::Blue, "something");
     log.logc(LogColor::Blue, "mipt");
-
     
     return 0;
 }
 
 int main()
 {
-    std::cout << RED BOLD;
+    glog.log("one more time something");
+
     MAIN();
-    std::cout << RESET_CONSOLE_OUT;
     return 0;
 }

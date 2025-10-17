@@ -17,11 +17,11 @@ module;
 
 //----------------------------------------------------------------------------------------------
 
-#ifdef SAVE_HTML_STYLE
+#if defined(SAVE_HTML_STYLE)
     #define ON_TAB(...) __VA_ARGS__
-#else // SAVE_HTML_STYLE
+#else /* defined(SAVE_HTML_STYLE) */
     #define ON_TAB(...)
-#endif // SAVE_HTML_STYLE
+#endif /* defined(SAVE_HTML_STYLE) */
 
 //----------------------------------------------------------------------------------------------
 
@@ -29,14 +29,20 @@ export module logger;
 
 //----------------------------------------------------------------------------------------------
 
-#ifdef LOG_DIR
+#if !defined(LOG_DIR)
+#warning "You dont give log-out dir to logger. Log-out directory will be made in one level with yout current directory."
+#endif /* !defined(LOG_DIR) */
+
+#if defined(LOG_DIR)
 const std::string path_to_log_file         = LOG_DIR                                                  ;
-#else // LOG_DIR
+#else /* defined(LOG_DIR) */
 const std::string path_to_log_file         = "../log/"                                                ; // from 'build' directory
-#endif // LOG_DIR
-const std::string default_log_file_name    = "log"                                                    ;
+#endif /* defined(LOG_DIR) */
+const std::string default_log_file_name    = "deflog"                                                 ;
 const std::string html_extension           = ".html"                                                  ;
 const std::string full_path_to_default_log = path_to_log_file + default_log_file_name + html_extension; // from 'build' directory
+
+const std::string global_logger_name      = "global";
 
 //----------------------------------------------------------------------------------------------
 
@@ -58,7 +64,6 @@ export enum class LogColor : char
     Yellow  ,
     Black   ,
     Blue    ,
-    NO_COLOR,
 };
 
 //----------------------------------------------------------------------------------------------
@@ -90,8 +95,12 @@ export class Logger
        ~Logger();
 
         // not allowed to copy logger
-        Logger           (const Logger&) = delete;
-        Logger& operator=(const Logger&) = delete;
+        Logger           (const Logger&)  = delete;
+        Logger& operator=(const Logger&)  = delete;
+
+        // not allowed to move logger
+        Logger           (const Logger&&) = delete;
+        Logger& operator=(const Logger&&) = delete;
 
         // logger public methods    
         template <typename... Args>
@@ -113,10 +122,12 @@ export class Logger
 
         void log_endl             ();
 
+        void log_image            (std::string_view path_to_image, std::string_view description = "");
+
     private:
         // logger private variables
-        std::ofstream     log_file_       ;
-        LogColor          current_color_  ;
+        std::ofstream log_file_;
+        LogColor      current_color_  ;
 
         // logger private methods
         template <typename... Args>
@@ -137,7 +148,23 @@ export class Logger
         void failed_open_log_file(const std::string& file);
 };
 
-// ctors 
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+//----------------------------------------------------------------------------------------------
+// create global log file
+
+// glog = global logger
+#if defined(GLOBAL_LOGGER_DEFAULT) 
+    export Logger glog(global_logger_name);
+#elif defined(GLOBAL_LOGGER_IMAGE)
+    export Logger glog(global_logger_name, GLOBAL_LOGGER_IMAGE);
+#elif defined(GLOBAL_LOGGER_GRADIENT)
+    export Logger glog(global_logger_name, LoggerBackground::gradient);
+#else
+    export Logger glog(global_logger_name);
+#endif
+
+// ctors
 //----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
@@ -335,7 +362,7 @@ void Logger::log_in_line_end()
 
 void Logger::title(const std::string& title, LogColor color)
 {
-    static const size_t ScreenSize = 45; //count in char's, that size is like h2
+    static constexpr size_t ScreenSize = 45; //count in char's, that size is like h2
     size_t title_len = title.size() + 2;
 
     size_t free_place_len = 0;
@@ -343,7 +370,6 @@ void Logger::title(const std::string& title, LogColor color)
     if (free_place_len > 0 && (ScreenSize - title_len) % 2 == 0) --free_place_len;
 
     set_color(color);
-
     write_in_html(ON_TAB("\t\t\t\t") "<h2>");
 
     for (size_t i = 0; i < free_place_len; i++)
@@ -392,6 +418,14 @@ void Logger::code_place(const std::source_location& code_place)
 
 //----------------------------------------------------------------------------------------------
 
+void Logger::log_image(std::string_view path_to_image, std::string_view description)
+{
+    write_in_html(ON_TAB("\t\t\t\t")
+                  "<img src=\"", path_to_image,
+                  "\" alt=\"", description,
+                  "\">" ON_TAB("\n"));
+}
+
 // private methods
 //----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
@@ -400,17 +434,16 @@ void Logger::code_place(const std::source_location& code_place)
 template <typename... Args>
 void Logger::write_in_html(const Args&... args)
 {
-    ((log_file_ << args), ... );
-    log_file_ << std::flush;
+    ((log_file_ << args), ... ) << std::flush;
 }
 
 //----------------------------------------------------------------------------------------------
 
 void Logger::all_ctors_actions(std::string_view name, const LogCallPlace& need_to_log_call_place, const std::source_location& location)
 {
-    std::cerr << WHITE "full path log:" << std::endl << BOLD << name << RESET_CONSOLE_OUT << std::endl;
+    std::cerr << WHITE "path to log:\n" VIOLET BOLD << name << RESET_CONSOLE_OUT << std::endl;
 
-    write_in_html(ON_TAB("\t\t\t") "<span class=\"color white text\">" ON_TAB("\n"));
+    write_in_html(ON_TAB("\t\t\t") "<span class=\"color white\">" ON_TAB("\n"));
     date();
     log_call_place_if_need(need_to_log_call_place, location);
     log_endl();
@@ -489,13 +522,13 @@ std::string Logger::get_color_in_str_for_html(const LogColor& color)
 {
     switch (color)
     {
-        case LogColor::Red:      return "red_text"   ;
-        case LogColor::Green:    return "green_text" ;
-        case LogColor::Pink:     return "pink_text"  ;
-        case LogColor::Yellow:   return "yellow_text";
-        case LogColor::Black:    return "black_text" ;
-        case LogColor::Blue:     return "blue_text"  ;
-        case LogColor::White:    return "white_text" ;
+        case LogColor::Red:      return "red"   ;
+        case LogColor::Green:    return "green" ;
+        case LogColor::Pink:     return "pink"  ;
+        case LogColor::Yellow:   return "yellow";
+        case LogColor::Black:    return "black" ;
+        case LogColor::Blue:     return "blue"  ;
+        case LogColor::White:    return "white" ;
         default:                 builtin_unreachable_wrapper("undef color type. maybe you forgot to add something color");
     }
 

@@ -52,13 +52,6 @@
 "margin: 0;"                                                                       endl1_str tab4_str \
 "line-height: 1.1;"                                                                endl1_str tab3_str \
 "}"                                                                                endl2_str tab3_str \
-".red_text { color: #ff4444; }"                                                  endl1_str tab3_str \
-".green_text { color: #0bf80b; }"                                                endl1_str tab3_str \
-".pink_text { color: #f605c7; }"                                                 endl1_str tab3_str \
-".yellow_text { color: #ecc40b; }"                                               endl1_str tab3_str \
-".blue_text { color: #0c89e8; }"                                                 endl1_str tab3_str \
-".black_text { color: #000000; }"                                                endl1_str tab3_str \
-".white_text { color: #ffffff; }"                                                endl2_str tab3_str \
 "body::before {"                                                                   endl1_str tab4_str \
 "content: \"\";"                                                                   endl1_str tab4_str \
 "position: fixed;"                                                                 endl1_str tab4_str \
@@ -69,7 +62,14 @@
 "background: rgba(0, 0, 0, 0.5);"                                                endl1_str tab4_str \
 "z-index: -1;"                                                                     endl1_str tab4_str \
 "pointer-events: none;"                                                            endl1_str tab3_str \
-"}"                                                                                endl1_str tab2_str \
+"}"                                                                                endl2_str tab3_str \
+".red { color: #ff4444; }"                                                       endl1_str tab3_str \
+".green { color: #0bf80b; }"                                                     endl1_str tab3_str \
+".pink { color: #f605c7; }"                                                      endl1_str tab3_str \
+".yellow { color: #ecc40b; }"                                                    endl1_str tab3_str \
+".blue { color: #0c89e8; }"                                                      endl1_str tab3_str \
+".black { color: #000000; }"                                                     endl1_str tab3_str \
+".white { color: #ffffff; }"                                                     endl1_str tab2_str \
 "</style>"                                                                         endl1_str tab1_str \
 "</head>"                                                                          endl2_str tab1_str \
 "<body>"                                                                           endl1_str tab2_str \
