@@ -74,8 +74,8 @@ target_sources(${LOGGER_LIB}
     PUBLIC
     FILE_SET CXX_MODULES
     TYPE CXX_MODULES
-    BASE_DIRS ${CMAKE_CURRENT_SOURCE_DIR}
-    FILES ${PROJECT_SOURCE_DIR}/modules/log.cppm
+    FILES
+        ${PROJECT_SOURCE_DIR}/modules/log.cppm
 )
 
 target_include_directories(${LOGGER_LIB}
@@ -85,12 +85,14 @@ target_include_directories(${LOGGER_LIB}
 )
 
 target_compile_definitions(${LOGGER_LIB} PRIVATE
-    # LOG_DIR="${LOG_OUT_DIR}/"
+    LOG_DIR="${LOG_OUT_DIR}/"
+    $<$<CONFIG:Debug>:SAVE_HTML_STYLE>
     # GLOBAL_LOGGER_IMAGE="/path/to/image"
     # GLOBAL_LOGGER_GRADIENT
     # GLOBAL_LOGGER_DEFAULT
-    $<$<CONFIG:Debug>:SAVE_HTML_STYLE>
 )
+
+add_release_and_debug_options_to_target(${LOGGER_LIB})
 
 # ======================================================================
 # remove all log files target
@@ -122,5 +124,3 @@ add_custom_target(rebuild_logger
 )
 
 add_release_and_debug_options_to_target(${TEST_TARGET})
-
-add_release_and_debug_options_to_target(${LOGGER_LIB})
