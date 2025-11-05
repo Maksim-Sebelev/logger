@@ -1,4 +1,6 @@
-module;
+#pragma once
+
+//----------------------------------------------------------------------------------------------
 
 #include <iostream>
 #include <string>
@@ -25,28 +27,38 @@ module;
 
 //----------------------------------------------------------------------------------------------
 
-export module logger;
+namespace PineapLog
+{
 
 //----------------------------------------------------------------------------------------------
 
-#if !defined(LOG_DIR)
+namespace Detail
+{
+
+//----------------------------------------------------------------------------------------------
+
+#if not defined(LOG_DIR)
 #warning "You dont give log-out dir to logger. Log-out directory will be made in one level with yout current directory."
-#endif /* !defined(LOG_DIR) */
+#endif /* not defined(LOG_DIR) */
 
 #if defined(LOG_DIR)
-const std::string path_to_log_file         = LOG_DIR                                                  ;
+const std::string Detail::path_to_log_file        = LOG_DIR                                                  ;
 #else /* defined(LOG_DIR) */
-const std::string path_to_log_file         = "../log/"                                                ; // from 'build' directory
+inline const std::string path_to_log_file         = "../log/"                                                ;
 #endif /* defined(LOG_DIR) */
-const std::string default_log_file_name    = "deflog"                                                 ;
-const std::string html_extension           = ".html"                                                  ;
-const std::string full_path_to_default_log = path_to_log_file + default_log_file_name + html_extension; // from 'build' directory
+inline const std::string default_log_file_name    = "deflog"                                                 ;
+inline const std::string html_extension           = ".html"                                                  ;
+inline const std::string full_path_to_default_log = path_to_log_file + default_log_file_name + html_extension;
 
-const std::string global_logger_name      = "global";
+inline const std::string global_logger_name       = "global"                                                 ;
 
 //----------------------------------------------------------------------------------------------
 
-export enum class LoggerBackground
+} /* namespace Detail */
+
+//----------------------------------------------------------------------------------------------
+
+enum class LoggerBackground
 {
     plain   ,
     image   ,
@@ -55,7 +67,7 @@ export enum class LoggerBackground
 
 //----------------------------------------------------------------------------------------------
 
-export enum class LogColor : char
+enum class LogColor : char
 {
     White   ,
     Red     ,
@@ -68,32 +80,25 @@ export enum class LogColor : char
 
 //----------------------------------------------------------------------------------------------
 
-export enum class LogCallPlace : bool
-{
-    No  = false,
-    Yes = true ,
-};
-
-//----------------------------------------------------------------------------------------------
-
-export class Logger
+class Logger
 {
     public:
-        // dafault ctor. background type = plain
-        Logger(const std::string& logger_file_name,                                     const LogCallPlace& need_log_code_place = LogCallPlace::No, const std::source_location& location = std::source_location::current());
-        Logger(                                                                         const LogCallPlace& need_log_code_place = LogCallPlace::No, const std::source_location& location = std::source_location::current()); // same ctor, but with default name
+        // default ctor. background type = plain
+        inline Logger(const std::string& logger_file_name,                                     bool need_log_call_place = false, const std::source_location& location = std::source_location::current());
+        inline Logger(                                                                         bool need_log_call_place = false, const std::source_location& location = std::source_location::current()); // same ctor, but with default name
 
         // ctor with choice of background type. BUT here you cant to choose image on background
-        Logger(const std::string& logger_file_name, const LoggerBackground& background, const LogCallPlace& need_log_code_place = LogCallPlace::No, const std::source_location& location = std::source_location::current());
-        Logger(                                     const LoggerBackground& background, const LogCallPlace& need_log_code_place = LogCallPlace::No, const std::source_location& location = std::source_location::current()); // same ctor, but with default name
+        inline Logger(const std::string& logger_file_name, const LoggerBackground& background, bool need_log_call_place = false, const std::source_location& location = std::source_location::current());
+        inline Logger(                                     const LoggerBackground& background, bool need_log_call_place = false, const std::source_location& location = std::source_location::current()); // same ctor, but with default name
 
         // ctor for background with image
-        Logger(const std::string& logger_file_name, std::string_view path_to_image,     const LogCallPlace& need_log_code_place = LogCallPlace::No, const std::source_location& location = std::source_location::current());
-        Logger(const LoggerBackground&  background, std::string_view path_to_image,     const LogCallPlace& need_log_code_place = LogCallPlace::No, const std::source_location& location = std::source_location::current()); // same ctor, but with default name
+        inline Logger(const std::string& logger_file_name, std::string_view path_to_image,     bool need_log_call_place = false, const std::source_location& location = std::source_location::current());
+        inline Logger(const LoggerBackground&  background, std::string_view path_to_image,     bool need_log_call_place = false, const std::source_location& location = std::source_location::current()); // same ctor, but with default name
 
         // dtor
-       ~Logger();
+        inline ~Logger();
 
+        // rule of 5 (redefine default dtor)
         // not allowed to copy logger
         Logger           (const Logger&)  = delete;
         Logger& operator=(const Logger&)  = delete;
@@ -104,25 +109,25 @@ export class Logger
 
         // logger public methods    
         template <typename... Args>
-        void log                  (                       const Args&... args);
+        inline void log                  (                       const Args&... args);
         template <typename... Args>
-        void logc                 (const LogColor& color, const Args&... args);
+        inline void logc                 (const LogColor& color, const Args&... args);
 
-        void logc_in_line_begin   (const LogColor& color = LogColor::White);
-        void log_in_line_begin    ();
+        inline void logc_in_line_begin   (const LogColor& color = LogColor::White);
+        inline void log_in_line_begin    ();
         template <typename... Args>
-        void log_in_line          (                       const Args&... args);
-        void log_in_line_end      ();
+        inline void log_in_line          (                       const Args&... args);
+        inline void log_in_line_end      ();
 
-        void title                (const std::string& title, LogColor color = LogColor::White);
+        inline void title                (const std::string& title, LogColor color = LogColor::White);
 
-        void code_place           (const std::source_location& location = std::source_location::current());
+        inline void code_place           (const std::source_location& location = std::source_location::current());
 
-        void set_color            (const LogColor& color);
+        inline void set_color            (const LogColor& color);
 
-        void log_endl             ();
+        inline void log_endl             ();
 
-        void log_image            (std::string_view path_to_image, std::string_view description = "");
+        inline void log_image            (std::string_view path_to_image, std::string_view description = "");
 
     private:
         // logger private variables
@@ -131,21 +136,21 @@ export class Logger
 
         // logger private methods
         template <typename... Args>
-        void write_in_html(const Args&... args);
+        inline void write_in_html(const Args&... args);
 
-        void all_ctors_actions(std::string_view name, const LogCallPlace& need_to_log_call_place, const std::source_location& location);   
+        inline void all_ctors_actions(std::string_view name, bool need_log_call_place, const std::source_location& location);   
 
-        bool try_to_create_log_dir_and_open_it_one_more_time(const std::string& log_file_name);
+        inline bool try_to_create_log_dir_and_open_it_one_more_time(const std::string& log_file_name);
     
         std::string get_color_in_str_for_html(const LogColor& color);
 
-        void date(const LogColor& color = LogColor::White);
+        inline void date(const LogColor& color = LogColor::White);
 
-        void log_call_place_if_need(const LogCallPlace& need_to_log_call_place, const std::source_location location, std::string_view message = "");
-        void check_that_open_success(const std::string& log_file_name, bool already_with_path = false);
+        inline void log_call_place_if_need(bool need_log_call_place, const std::source_location location, std::string_view message = "");
+        inline void check_that_open_success(const std::string& log_file_name, bool already_with_path = false);
 
         [[noreturn]]
-        void failed_open_log_file(const std::string& file);
+        inline void failed_open_log_file(const std::string& file);
 };
 
 //----------------------------------------------------------------------------------------------
@@ -155,13 +160,13 @@ export class Logger
 
 // glog = global logger
 #if defined(GLOBAL_LOGGER_DEFAULT) 
-    export Logger glog(global_logger_name);
+    inlineLogger glog(global_logger_name);
 #elif defined(GLOBAL_LOGGER_IMAGE)
-    export Logger glog(global_logger_name, GLOBAL_LOGGER_IMAGE);
+    inline Logger glog(global_logger_name, GLOBAL_LOGGER_IMAGE);
 #elif defined(GLOBAL_LOGGER_GRADIENT)
-    export Logger glog(global_logger_name, LoggerBackground::gradient);
+    inline Logger glog(global_logger_name, LoggerBackground::gradient);
 #else
-    export Logger glog(global_logger_name);
+    inline Logger glog(Detail::global_logger_name);
 #endif
 
 // ctors
@@ -169,39 +174,38 @@ export class Logger
 //----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
 
-Logger::Logger(const std::string& log_file_name, const LogCallPlace& need_to_log_call_place, const std::source_location& location) :
-log_file_(path_to_log_file + log_file_name + html_extension),
+inline Logger::Logger(const std::string& log_file_name, bool need_log_call_place, const std::source_location& location) :
+log_file_(Detail::path_to_log_file + log_file_name + Detail::html_extension),
 current_color_(LogColor::White)
 {
     check_that_open_success(log_file_name);
 
     write_in_html(PLAIN_BACKGROUND_HTML_SETTINGS);
 
-    all_ctors_actions(path_to_log_file + log_file_name + html_extension, need_to_log_call_place, location);
+    all_ctors_actions(Detail::path_to_log_file + log_file_name + Detail::html_extension, need_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
 
-Logger::Logger(const LogCallPlace& need_to_log_call_place, const std::source_location& location) :
-log_file_(full_path_to_default_log),
+inline Logger::Logger(bool need_log_call_place, const std::source_location& location) :
+log_file_(Detail::full_path_to_default_log),
 current_color_(LogColor::White)
 {
-    check_that_open_success(full_path_to_default_log, true);
+    check_that_open_success(Detail::full_path_to_default_log, true);
     
     write_in_html(PLAIN_BACKGROUND_HTML_SETTINGS);
 
-    all_ctors_actions(full_path_to_default_log, need_to_log_call_place, location);
+    all_ctors_actions(Detail::full_path_to_default_log, need_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
 
-Logger::Logger(const std::string& log_file_name, const LoggerBackground& background, const LogCallPlace& need_to_log_call_place, const std::source_location& location) :
-log_file_(path_to_log_file + log_file_name + html_extension),
+inline Logger::Logger(const std::string& log_file_name, const LoggerBackground& background, bool need_log_call_place, const std::source_location& location) :
+log_file_(Detail::path_to_log_file + log_file_name + Detail::html_extension),
 current_color_(LogColor::White)
 {
     check_that_open_success(log_file_name);
 
-
     switch (background)
     {
         case LoggerBackground::plain:
@@ -221,16 +225,16 @@ current_color_(LogColor::White)
             break;
     }
 
-    all_ctors_actions(path_to_log_file + log_file_name + html_extension, need_to_log_call_place, location);
+    all_ctors_actions(Detail::path_to_log_file + log_file_name + Detail::html_extension, need_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
 
-Logger::Logger(const LoggerBackground& background, const LogCallPlace& need_to_log_call_place, const std::source_location& location) :
-log_file_(full_path_to_default_log),
+inline Logger::Logger(const LoggerBackground& background, bool need_log_call_place, const std::source_location& location) :
+log_file_(Detail::full_path_to_default_log),
 current_color_(LogColor::White)
 {
-    check_that_open_success(full_path_to_default_log, true);
+    check_that_open_success(Detail::full_path_to_default_log, true);
 
     switch (background)
     {
@@ -251,29 +255,29 @@ current_color_(LogColor::White)
             break;
     }
 
-    all_ctors_actions(full_path_to_default_log, need_to_log_call_place, location);
+    all_ctors_actions(Detail::full_path_to_default_log, need_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
 
-Logger::Logger(const std::string& log_file_name, std::string_view path_to_image, const LogCallPlace& need_to_log_call_place, const std::source_location& location) :
-log_file_(path_to_log_file + log_file_name + html_extension),
+inline Logger::Logger(const std::string& log_file_name, std::string_view path_to_image, bool need_log_call_place, const std::source_location& location) :
+log_file_(Detail::path_to_log_file + log_file_name + Detail::html_extension),
 current_color_(LogColor::White)
 {
     check_that_open_success(log_file_name);
     
     write_in_html(IMAGE_BACKGROUND_HTML_SETTINGS(path_to_image));
 
-    all_ctors_actions(path_to_log_file + log_file_name + html_extension, need_to_log_call_place, location);
+    all_ctors_actions(Detail::path_to_log_file + log_file_name + Detail::html_extension, need_log_call_place, location);
 }
 
 //----------------------------------------------------------------------------------------------
 
-Logger::Logger(const LoggerBackground& background, std::string_view path_to_image, const LogCallPlace& need_to_log_call_place, const std::source_location& location) :
-log_file_(full_path_to_default_log),
+inline Logger::Logger(const LoggerBackground& background, std::string_view path_to_image, bool need_log_call_place, const std::source_location& location) :
+log_file_(Detail::full_path_to_default_log),
 current_color_(LogColor::White)
 {
-    check_that_open_success(full_path_to_default_log, true);
+    check_that_open_success(Detail::full_path_to_default_log, true);
 
     switch (background)
     {
@@ -286,7 +290,7 @@ current_color_(LogColor::White)
 
     write_in_html(IMAGE_BACKGROUND_HTML_SETTINGS(path_to_image));
 
-    all_ctors_actions(full_path_to_default_log, need_to_log_call_place, location);
+    all_ctors_actions(Detail::full_path_to_default_log, need_log_call_place, location);
 }
 
 // dtor
@@ -294,7 +298,7 @@ current_color_(LogColor::White)
 //----------------------------------------------------------------------------------------------
 //----------------------------------------------------------------------------------------------
 
-Logger::~Logger()
+inline Logger::~Logger()
 {
     date();
     write_in_html(HTML_END);
@@ -307,7 +311,7 @@ Logger::~Logger()
 //----------------------------------------------------------------------------------------------
 
 template <typename... Args>
-void Logger::logc(const LogColor& color, const Args&... args)
+inline void Logger::logc(const LogColor& color, const Args&... args)
 {
     set_color(color);
     write_in_html(ON_TAB("\t\t\t\t")"<p>", args..., "</p>" ON_TAB("\n"));
@@ -316,7 +320,7 @@ void Logger::logc(const LogColor& color, const Args&... args)
 //----------------------------------------------------------------------------------------------
 
 template <typename... Args>
-void Logger::log(const Args&... args)
+inline void Logger::log(const Args&... args)
 {
     write_in_html(ON_TAB("\t\t\t\t")"<p>", args..., "</p>" ON_TAB("\n"));
 }
@@ -324,21 +328,21 @@ void Logger::log(const Args&... args)
 //----------------------------------------------------------------------------------------------
 
 template <typename... Args>
-void Logger::log_in_line(const Args&... args)
+inline void Logger::log_in_line(const Args&... args)
 {
     write_in_html(args...);
 }
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::log_endl()
+inline void Logger::log_endl()
 {
     write_in_html(ON_TAB("\t\t\t\t") "<p>\n</p>" ON_TAB("\n"));
 }
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::logc_in_line_begin(const LogColor& color)
+inline void Logger::logc_in_line_begin(const LogColor& color)
 {
     set_color(color);
     write_in_html(ON_TAB("\t\t\t\t") "<p>");
@@ -346,21 +350,21 @@ void Logger::logc_in_line_begin(const LogColor& color)
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::log_in_line_begin()
+inline void Logger::log_in_line_begin()
 {
     write_in_html(ON_TAB("\t\t\t\t") "<p>");
 }
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::log_in_line_end()
+inline void Logger::log_in_line_end()
 {
     write_in_html("</p>" ON_TAB("\n"));
 }
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::title(const std::string& title, LogColor color)
+inline void Logger::title(const std::string& title, LogColor color)
 {
     static constexpr size_t ScreenSize = 45; //count in char's, that size is like h2
     size_t title_len = title.size() + 2;
@@ -385,7 +389,7 @@ void Logger::title(const std::string& title, LogColor color)
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::set_color(const LogColor& color)
+inline void Logger::set_color(const LogColor& color)
 {
     if (color == current_color_) // жертуем одним сравнением, чтобы не делать дорогой write_in_html
         return;
@@ -403,7 +407,7 @@ void Logger::set_color(const LogColor& color)
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::code_place(const std::source_location& code_place)
+inline void Logger::code_place(const std::source_location& code_place)
 {
     logc(LogColor::Pink,
               code_place.file_name(), ":",
@@ -418,7 +422,7 @@ void Logger::code_place(const std::source_location& code_place)
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::log_image(std::string_view path_to_image, std::string_view description)
+inline void Logger::log_image(std::string_view path_to_image, std::string_view description)
 {
     write_in_html(ON_TAB("\t\t\t\t")
                   "<img src=\"", path_to_image,
@@ -432,26 +436,26 @@ void Logger::log_image(std::string_view path_to_image, std::string_view descript
 //----------------------------------------------------------------------------------------------
 
 template <typename... Args>
-void Logger::write_in_html(const Args&... args)
+inline void Logger::write_in_html(const Args&... args)
 {
     ((log_file_ << args), ... ) << std::flush;
 }
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::all_ctors_actions(std::string_view name, const LogCallPlace& need_to_log_call_place, const std::source_location& location)
+inline void Logger::all_ctors_actions(std::string_view name, bool need_log_call_place, const std::source_location& location)
 {
     std::cerr << WHITE "path to log:\n" VIOLET BOLD << name << RESET_CONSOLE_OUT << std::endl;
 
     write_in_html(ON_TAB("\t\t\t") "<span class=\"color white\">" ON_TAB("\n"));
     date();
-    log_call_place_if_need(need_to_log_call_place, location);
+    log_call_place_if_need(need_log_call_place, location);
     log_endl();
 }
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::date(const LogColor& color)
+inline void Logger::date(const LogColor& color)
 {
     time_t raw_time;
     struct tm *time_info;
@@ -467,13 +471,13 @@ void Logger::date(const LogColor& color)
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::check_that_open_success(const std::string& log_file_name, bool already_with_path)
+inline void Logger::check_that_open_success(const std::string& log_file_name, bool already_with_path)
 {
     if (!log_file_.fail())
         return;
 
     const std::string full_path_to_log_file = (already_with_path) ? (log_file_name) :
-                                              (path_to_log_file + log_file_name + html_extension);
+                                              (Detail::path_to_log_file + log_file_name + Detail::html_extension);
 
     if (try_to_create_log_dir_and_open_it_one_more_time(full_path_to_log_file))
         return;
@@ -483,7 +487,7 @@ void Logger::check_that_open_success(const std::string& log_file_name, bool alre
 
 //----------------------------------------------------------------------------------------------
 
-bool Logger::try_to_create_log_dir_and_open_it_one_more_time(const std::string& log_file_name)
+inline bool Logger::try_to_create_log_dir_and_open_it_one_more_time(const std::string& log_file_name)
 {
     std::filesystem::path path(log_file_name);
     std::string           dir_path = path.parent_path().string();
@@ -505,9 +509,9 @@ bool Logger::try_to_create_log_dir_and_open_it_one_more_time(const std::string& 
 
 //----------------------------------------------------------------------------------------------
 
-void Logger::log_call_place_if_need(const LogCallPlace& need_to_log_call_place, const std::source_location location, std::string_view message)
+inline void Logger::log_call_place_if_need(bool need_log_call_place, const std::source_location location, std::string_view message)
 {
-    if (need_to_log_call_place == LogCallPlace::No)
+    if (not need_log_call_place)
         return;
 
     if (message != "")
@@ -518,7 +522,7 @@ void Logger::log_call_place_if_need(const LogCallPlace& need_to_log_call_place, 
 
 //----------------------------------------------------------------------------------------------
 
-std::string Logger::get_color_in_str_for_html(const LogColor& color)
+std::string inline Logger::get_color_in_str_for_html(const LogColor& color)
 {
     switch (color)
     {
@@ -539,10 +543,33 @@ std::string Logger::get_color_in_str_for_html(const LogColor& color)
 //----------------------------------------------------------------------------------------------
 
 [[noreturn]]
-void Logger::failed_open_log_file(const std::string& file)
+inline void Logger::failed_open_log_file(const std::string& file)
 {
     std::cerr << RED BOLD "Failed open log file: `" ITALIC <<  file << "'" RESET_CONSOLE_OUT << std::endl;
     exit(EXIT_FAILURE);
 }
+
+//----------------------------------------------------------------------------------------------
+
+} /* namespace PineapLog */
+
+//----------------------------------------------------------------------------------------------
+
+// undef all logger detail-macroses
+#undef ON_TAB
+#undef LOG_DIR
+#undef endl1_str
+#undef endl2_str
+#undef tab1_str
+#undef tab2_str
+#undef tab3_str
+#undef tab4_str
+#undef tab5_str
+#undef GLOBAL_HTML_SETTINGS_1
+#undef GLOBAL_HTML_SETTINGS_2
+#undef PLAIN_BACKGROUND_HTML_SETTINGS
+#undef GRADIENT_BACKGROUND_HTML_SETTINGS
+#undef IMAGE_BACKGROUND_HTML_SETTINGS
+#undef HTML_END
 
 //----------------------------------------------------------------------------------------------
