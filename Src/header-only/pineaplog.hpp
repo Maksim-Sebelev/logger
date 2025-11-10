@@ -568,5 +568,9 @@ inline void Logger::failed_open_log_file(const std::string& file)
 #undef GRADIENT_BACKGROUND_HTML_SETTINGS
 #undef IMAGE_BACKGROUND_HTML_SETTINGS
 #undef HTML_END
+#undef builtin_unreachable_wrapper
+#undef msg_assert
+#undef ON_DEBUG
+#undef OFF_DEBUG
 
 //----------------------------------------------------------------------------------------------
