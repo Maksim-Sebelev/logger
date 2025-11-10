@@ -160,11 +160,11 @@ class Logger
 
 // glog = global logger
 #if defined(GLOBAL_LOGGER_DEFAULT) 
-    inlineLogger glog(global_logger_name);
+    inline Logger glog(Detail::global_logger_name);
 #elif defined(GLOBAL_LOGGER_IMAGE)
-    inline Logger glog(global_logger_name, GLOBAL_LOGGER_IMAGE);
+    inline Logger glog(Detail::global_logger_name, GLOBAL_LOGGER_IMAGE);
 #elif defined(GLOBAL_LOGGER_GRADIENT)
-    inline Logger glog(global_logger_name, LoggerBackground::gradient);
+    inline Logger glog(Detail::global_logger_name, LoggerBackground::gradient);
 #else
     inline Logger glog(Detail::global_logger_name);
 #endif
