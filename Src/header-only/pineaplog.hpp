@@ -38,12 +38,12 @@ namespace Detail
 //----------------------------------------------------------------------------------------------
 
 #if not defined(LOG_DIR)
-#warning "You dont give log-out dir to logger. Log-out directory will be made in one level with yout current directory."
 #endif /* not defined(LOG_DIR) */
 
 #if defined(LOG_DIR)
-const std::string Detail::path_to_log_file        = LOG_DIR                                                  ;
+inline const std::string path_to_log_file        = LOG_DIR                                                  ;
 #else /* defined(LOG_DIR) */
+#warning "You dont give log-out dir to logger. Log-out directory will be made in one level with yout current directory."
 inline const std::string path_to_log_file         = "../log/"                                                ;
 #endif /* defined(LOG_DIR) */
 inline const std::string default_log_file_name    = "deflog"                                                 ;
