@@ -37,9 +37,6 @@ namespace Detail
 
 //----------------------------------------------------------------------------------------------
 
-#if not defined(LOG_DIR)
-#endif /* not defined(LOG_DIR) */
-
 #if defined(LOG_DIR)
 inline const std::string path_to_log_file        = LOG_DIR                                                  ;
 #else /* defined(LOG_DIR) */
