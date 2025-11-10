@@ -445,7 +445,7 @@ inline void Logger::write_in_html(const Args&... args)
 
 inline void Logger::all_ctors_actions(std::string_view name, bool need_log_call_place, const std::source_location& location)
 {
-    std::cerr << WHITE "path to log:\n" VIOLET BOLD << name << RESET_CONSOLE_OUT << std::endl;
+    // std::cerr << WHITE "path to log:\n" VIOLET BOLD << name << RESET_CONSOLE_OUT << std::endl;
 
     write_in_html(ON_TAB("\t\t\t") "<span class=\"color white\">" ON_TAB("\n"));
     date();
